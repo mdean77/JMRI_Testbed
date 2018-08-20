@@ -202,61 +202,62 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                                    self.sensor5,
                                    self.sensor9,
                                    self.sensor13)
-            
-                                   self.MediumSpeedHOBlocks = 4
                                    
-                                   self.MediumSpeedArrayN= (
-                                                            self.sensor1,
-                                                            self.sensor5,
-                                                            self.sensor9,
-                                                            self.sensor13)
-                                   self.MediumSpeedNBlocks = 3
+        self.MediumSpeedHOBlocks = 4
                                    
-                                   self.MediumSpeedThreshold = 45
-                                   self.HighSpeedThreshold = 85
+        self.MediumSpeedArrayN= (
+                                self.sensor1,
+                                self.sensor5,
+                                self.sensor9,
+                                self.sensor13)
+                        
+        self.MediumSpeedNBlocks = 3
                                    
-                                   self.LowSpeedArrayHO = (
-                                                           self.sensor1,
-                                                           self.sensor2,
-                                                           self.sensor3,
-                                                           self.sensor4,
-                                                           self.sensor5,
-                                                           self.sensor6,
-                                                           self.sensor7,
-                                                           self.sensor8,
-                                                           self.sensor9,
-                                                           self.sensor10,
-                                                           self.sensor11,
-                                                           self.sensor12,
-                                                           self.sensor13,
-                                                           self.sensor14,
-                                                           self.sensor15,
-                                                           self.sensor16)
+        self.MediumSpeedThreshold = 45
+        self.HighSpeedThreshold = 85
                                    
-                                   self.LowSpeedHOBlocks = 1
+        self.LowSpeedArrayHO = (
+                               self.sensor1,
+                               self.sensor2,
+                               self.sensor3,
+                               self.sensor4,
+                               self.sensor5,
+                               self.sensor6,
+                               self.sensor7,
+                               self.sensor8,
+                               self.sensor9,
+                               self.sensor10,
+                               self.sensor11,
+                               self.sensor12,
+                               self.sensor13,
+                               self.sensor14,
+                               self.sensor15,
+                               self.sensor16)
                                    
-                                   self.LowSpeedArrayN = (
-                                                          self.sensor1,
-                                                          self.sensor2,
-                                                          self.sensor4,
-                                                          self.sensor5,
-                                                          self.sensor6,
-                                                          self.sensor8,
-                                                          self.sensor9,
-                                                          self.sensor10,
-                                                          self.sensor12,
-                                                          self.sensor13,
-                                                          self.sensor14,
-                                                          self.sensor16)
+        self.LowSpeedHOBlocks = 1
                                    
-                                   self.LowSpeedNBlocks = 1
+        self.LowSpeedArrayN = (
+                              self.sensor1,
+                              self.sensor2,
+                              self.sensor4,
+                              self.sensor5,
+                              self.sensor6,
+                              self.sensor8,
+                              self.sensor9,
+                              self.sensor10,
+                              self.sensor12,
+                              self.sensor13,
+                              self.sensor14,
+                              self.sensor16)
                                    
-                                   self.NumSpeedMeasurements = 5
+        self.LowSpeedNBlocks = 1
                                    
-                                   #        The original list was: DecoderList = ["Select Decoder", "Digitrax", "TCS", "NCE", "QSI/BLI", "Lenz Gen 5", "ESU", "Atlas/Lenz XF", "Tsunami"]
+        self.NumSpeedMeasurements = 5
                                    
-                                   self.DecoderMap = {141:"Tsunami", 129:"Digitrax", 153:"TCS", 11:"NCE", 113: "QSI/BLI", 99:"Lenz Gen 5", 151:"ESU", 127:"Atlas/Lenz XF"}
-                                   self.DecoderType = "Default"
+#        The original list was: DecoderList = ["Select Decoder", "Digitrax", "TCS", "NCE", "QSI/BLI", "Lenz Gen 5", "ESU", "Atlas/Lenz XF", "Tsunami"]
+                                   
+        self.DecoderMap = {141:"Tsunami", 129:"Digitrax", 153:"TCS", 11:"NCE", 113: "QSI/BLI", 99:"Lenz Gen 5", 151:"ESU", 127:"Atlas/Lenz XF"}
+        self.DecoderType = "Default"
                                    
                                    #        These speed steps are measured.  All others are calculated
                                    #        CV            70    74    78    82    86    90    94
@@ -678,7 +679,7 @@ else :
             self.DecoderType = self.DecoderMap[self.mfrID]
         else:
             self.DecoderType = "Unknown"
-
+    
     print "The Locomotive Address is: ", self.address
         print "The Manufacturer is: ", self.DecoderType
         print "The Manufacturer ID is: ", self.mfrID
@@ -704,9 +705,9 @@ self.status.text = "Getting throttle"
         print "ERROR: Couldn't assign throttle!"
         else :
             print "Trottle assigned to locomotive: ", self.address
-
+    
     # Getting Programmer
-
+    
     self.programmer = addressedProgrammers.getAddressedProgrammer(self.long, self.address)
         
         self.SWLed("BLU", "ON")
@@ -740,7 +741,7 @@ self.status.text = "Getting throttle"
         if (self.val106 < 255) :
             self.val106 = self.val106+1
             self.testbedWriteCV(106, self.val106) # Write count in Decoder CV 106
-
+        
         print "Set Private ID to ", self.val105, ", ", self.val106
 
 print "Decoder Brand is", self.DecoderType
@@ -755,7 +756,7 @@ print "Decoder Brand is", self.DecoderType
             self.testbedWriteCV(29, 34)
         else:
             self.testbedWriteCV(29, 2)
-
+    
     self.testbedWriteCV(2, 0)    #Start Voltage off
         self.testbedWriteCV(3, 0)    #Acceleration off
         self.testbedWriteCV(4, 0)    #Deceleration off
@@ -776,7 +777,7 @@ print "Decoder Brand is", self.DecoderType
             #01/09/09    TCS decoder would not move when setting throttle to 1.0
             
             print "Set the throttle to 1.0"
-
+        
         self.throttle.setSpeedSetting(.99)
         self.waitMsec(250)
         self.throttle.setSpeedSetting(1.0)
@@ -818,7 +819,7 @@ print "Wait for the locomotive to get to block", self.homesensor_num, "after", s
             self.waitMsec(3000)
         else :
             revmaxspeed = 0
-    
+        
         self.memory21.value = str(int(revmaxspeed))
         
         # Find maximum speed forward
@@ -893,7 +894,7 @@ else :
                 steplist = self.OldTCSStepList
                 print "Using old TCS steplist"
             self.waitMsec(3000)
-    
+        
         elif self.DecoderType == "Lenz5Gen" :
             steplist = self.Lenz5GenStepList
             elif self.DecoderType == "Atlas/Lenz XF" :
@@ -937,7 +938,7 @@ elif self.DecoderType == "ESU" :
                 if revmaxspeed > fwdmaxspeed :
                     self.throttle.setIsForward(False)
                     self.memory20.value = "Reverse"
-        
+            
             #Find throttle setting that gives desired speed
             
             stepvaluelist = [0]
@@ -975,7 +976,7 @@ elif self.DecoderType == "ESU" :
                     print
                     Done = True
                     throttlesetting = 127
-            
+                
                 while Done == False:
                     
                     # Measure speed
@@ -1003,7 +1004,7 @@ elif self.DecoderType == "ESU" :
                                     throttlesetting = lowthrottle
                                 else :
                                     throttlesetting = hithrottlesetting
-    
+                
                 elif difference < -13 and throttlesetting > 15 : # keep throttle setting > 0
                     hithrottle = throttlesetting
                         throttlesetting = throttlesetting - 6     # and don't want drastic changes
@@ -1019,7 +1020,7 @@ elif self.DecoderType == "ESU" :
                                     throttlesetting = lowthrottle
                                 else :
                                     throttlesetting = hithrottlesetting
-            
+                
                 elif difference < -8 and throttlesetting > 6 : # keep throttle setting > 0
                     hithrottle = throttlesetting
                         throttlesetting = throttlesetting - 3
@@ -1033,7 +1034,7 @@ elif self.DecoderType == "ESU" :
                                     throttlesetting = lowthrottle
                                 else :
                                     throttlesetting = hithrottlesetting
-
+                
                 elif difference > 13 and throttlesetting < 121 : # keep throtte setting < 128
                     lowthrottle = throttlesetting
                         throttlesetting = throttlesetting + 7
@@ -1184,7 +1185,7 @@ elif difference > 5 and targetspeed < 20 and throttlesetting > 10 : #for motors 
                                                                                                                                                                                                                                                                                     # Turn on acceleration and deceleration
                                                                                                                                                                                                                                                                                     self.testbedWriteCV(3, 1)    #Acceleration on
                                                                                                                                                                                                                                                                                     self.testbedWriteCV(4, 1)    #Deceleration on
-                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                        
                                                                                                                                                                                                                                                                                         self.status.text = "Done"
                                                                                                                                                                                                                                                                                             else :
                                                                                                                                                                                                                                                                                                 self.status.text = "Done - Locomotive has decoder or mechanical problem; cannot create speed table"
@@ -1198,13 +1199,13 @@ elif difference > 5 and targetspeed < 20 and throttlesetting > 10 : #for motors 
                                                                                                                                                                                                                                                                                                             endtesttime = java.lang.System.currentTimeMillis()
                                                                                                                                                                                                                                                                                                             print
                                                                                                                                                                                                                                                                                                                 print "Test Time =",(endtesttime - starttesttime) / 1000, "sec."
-                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                
                                                                                                                                                                                                                                                                                                                 print "Return to the home position"
                                                                                                                                                                                                                                                                                                                     self.throttle.setSpeedSetting(1.0)
                                                                                                                                                                                                                                                                                                                     self.waitChange([self.sensor1])
                                                                                                                                                                                                                                                                                                                     self.waitSensorActive(self.sensor1)
                                                                                                                                                                                                                                                                                                                     self.throttle.setSpeedSetting(0.0)
-                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                     # done!
                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                     self.SWLed("BLU", "OFF")
@@ -1219,11 +1220,11 @@ elif difference > 5 and targetspeed < 20 and throttlesetting > 10 : #for motors 
                                                                                                                                                                                                                                                                                                                         self.DCCPower("N",  "OFF")
                                                                                                                                                                                                                                                                                                                         self.DCCPower("HO", "OFF")
                                                                                                                                                                                                                                                                                                                         self.waitMsec(500)
-                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                        
                                                                                                                                                                                                                                                                                                                         self.DCCPower("N",  "ON")
                                                                                                                                                                                                                                                                                                                         self.DCCPower("HO", "ON")
                                                                                                                                                                                                                                                                                                                         self.waitMsec(500)
-                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                            
                                                                                                                                                                                                                                                                                                                             return False
 
 ####################################################################################
