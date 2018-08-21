@@ -590,7 +590,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                 print ("    Measurement ", z+1, ", Speed = ", str(round(speed,3)) , "MPH")
                 self.status.text = "Speed = " + str(round(speed,3)) + " MPH"
             speedlist.append(speed)
-            speed = self.getSpeed(speedlist)
+            
+        speed = self.getSpeed(speedlist)
         return speed
     
 ####################################################################################
@@ -610,50 +611,50 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
         print ("Speed Table Script Version", self.scriptversion)
         
         topspeed = float(self.MaxSpeed.text)/100
-        print "Top Target Speed is ", self.MaxSpeed.text, "MPH"
+        print ("Top Target Speed is ", self.MaxSpeed.text, "MPH")
         self.status.text = "Locomotive Setup"
         self.memory25.value = "Preparing Locomotive for speed measurments"
         
         self.TrackNormal()
         
         if (self.LoopActive("HO") and self.LoopActive("N")) :
-            print "Only ONE track loop can be active at a time!"
+            print ("Only ONE track loop can be active at a time!")
             return
         if (self.LoopActive("HO")) :
             self.status.text = "HO Scale Locomotive Detected"
-            print "Locomotive found on HO track loop"
+            print ("Locomotive found on HO track loop")
             self.block = self.blockHO
             self.scale = "HO"
             pass
         elif (self.LoopActive("N")) :
             self.status.text = "N Scale Locomotive Detected"
-            print "Locomotive found on N track loop"
+            print ("Locomotive found on N track loop")
             self.block = self.blockN
             self.scale = "N"
             pass
-else :
-    print "No locomotive detected, cannot proceed"
-        return
+        else :
+            print ("No locomotive detected, cannot proceed")
+            return
         
         self.TrackProgram()
-        
-        print "Reading Locomotive..."
+       
+        print ("Reading Locomotive...")
         self.val29 = self.readServiceModeCV("29")
-        print "CV 29 = ", self.val29
+        print ("CV 29 = ", self.val29)
         self.val1 = self.readServiceModeCV("1")
-        print "CV 1 = ", self.val1
+        print ("CV 1 = ", self.val1)
         self.val17 = self.readServiceModeCV("17")
-        print "CV 17 = ", self.val17
+        print ("CV 17 = ", self.val17)
         self.val18 = self.readServiceModeCV("18")
-        print "CV 18 = ", self.val18
+        print ("CV 18 = ", self.val18)
         self.val7 = self.readServiceModeCV("7")
-        print "CV 7 = ", self.val7
+        print ("CV 7 = ", self.val7)
         self.val8 = self.readServiceModeCV("8")
-        print "CV 8 = ", self.val8
+        print ("CV 8 = ", self.val8)
         self.val105 = self.readServiceModeCV("105")
-        print "CV 105 = ", self.val105
+        print ("CV 105 = ", self.val105)
         self.val106 = self.readServiceModeCV("106")
-        print "CV 106 = ", self.val106
+        print ("CV 106 = ", self.val106)
         
         # Determine if this locomotive uses a long address
         if ((self.val29 & 32) == 32) :
@@ -673,11 +674,11 @@ else :
         else:
             self.DecoderType = "Unknown"
     
-    print "The Locomotive Address is: ", self.address
-        print "The Manufacturer is: ", self.DecoderType
-        print "The Manufacturer ID is: ", self.mfrID
-        print "The Manufacturer Version is: ", self.mfrVersion
-        print "The Current Private ID is ", self.val105, ", ", self.val106
+        print ("The Locomotive Address is: ", self.address)
+        print ("The Manufacturer is: ", self.DecoderType)
+        print ("The Manufacturer ID is: ", self.mfrID)
+        print ("The Manufacturer Version is: ", self.mfrVersion)
+        print ("The Current Private ID is ", self.val105, ", ", self.val106)
         
         self.TrackNormal()
         
@@ -689,15 +690,15 @@ else :
             self.DCCPower("N",  "OFF")
         self.waitMsec(500)
 
-# Getting throttle
+        # Getting throttle
 
-self.status.text = "Getting throttle"
+        self.status.text = "Getting throttle"
     
     self.throttle = self.getThrottle(self.address, self.long)
     if (self.throttle == None) :
-        print "ERROR: Couldn't assign throttle!"
+        print ("ERROR: Couldn't assign throttle!")
         else :
-            print "Trottle assigned to locomotive: ", self.address
+            print ("Trottle assigned to locomotive: ", self.address)
     
     # Getting Programmer
     
@@ -705,9 +706,9 @@ self.status.text = "Getting throttle"
         
         self.SWLed("BLU", "ON")
         
-        print "Turn on the headlight"
+        print ("Turn on the headlight")
         self.throttle.setF0(True)
-        print "Mute the sound"
+        print ("Mute the sound")
         self.throttle.setF8(True)
         
         starttesttime = java.lang.System.currentTimeMillis()
@@ -735,9 +736,9 @@ self.status.text = "Getting throttle"
             self.val106 = self.val106+1
             self.testbedWriteCV(106, self.val106) # Write count in Decoder CV 106
         
-        print "Set Private ID to ", self.val105, ", ", self.val106
+        print ("Set Private ID to ", self.val105, ", ", self.val106)
 
-print "Decoder Brand is", self.DecoderType
+print ("Decoder Brand is", self.DecoderType)
     self.memory23.value = self.DecoderType
         
         self.memory25.value = "Setting CVs to known state"
@@ -763,24 +764,24 @@ print "Decoder Brand is", self.DecoderType
         self.memory25.value = "Warming up Locomotive"
         self.status.text = "Warming up Locomotive"
         print
-        print "Warming up Locomotive"
+        print ("Warming up Locomotive")
         self.throttle.setIsForward(True)
         self.memory20.value = "Forward"
             
             #01/09/09    TCS decoder would not move when setting throttle to 1.0
             
-            print "Set the throttle to 1.0"
+            print ("Set the throttle to 1.0")
         
         self.throttle.setSpeedSetting(.99)
         self.waitMsec(250)
         self.throttle.setSpeedSetting(1.0)
 
-print "Wait for the locomotive to get to block", self.homesensor_num, "after", self.warmupLaps, "laps..."
+print ("Wait for the locomotive to get to block", self.homesensor_num, "after", self.warmupLaps, "laps...")
     
     for x in range (0, self.warmupLaps) :
         self.waitNextActiveSensor([self.homesensor])
         
-        print "Stop the locomotive"
+        print ("Stop the locomotive")
         self.throttle.setSpeedSetting(0.0)
         self.waitMsec(2000)
         
@@ -791,21 +792,21 @@ print "Wait for the locomotive to get to block", self.homesensor_num, "after", s
             self.memory20.value = "Reverse"
             self.throttle.setSpeedSetting(1.0)
             
-            print "Warming up in the reverse direction for", self.warmupLaps, "laps..."
+            print ("Warming up in the reverse direction for", self.warmupLaps, "laps...")
             for x in range (0, self.warmupLaps) :
                 self.waitNextActiveSensor([self.homesensor])
             
             # Find maximum speed reverse
             
-            print "Finding the maximum reverse speed..."
+            print ("Finding the maximum reverse speed...")
             self.memory25.value = "Finding Maximum Reverse Speed"
             self.status.text = "Finding Maximum Reverse Speed"
             self.throttle.setSpeedSetting(1.0)
             self.waitMsec(500)
             revmaxspeed = self.measureSpeed(100, self.block, self.scale)
-            print "Maximum reverse speed found = ",round(revmaxspeed)
+            print ("Maximum reverse speed found = ",round(revmaxspeed))
             print
-            print "Returning locomotive to block", self.homesensor_num, "..."
+            print ("Returning locomotive to block", self.homesensor_num, "...")
             self.waitNextActiveSensor([self.homesensor])
             self.throttle.setSpeedSetting(0.0)
             self.status.text = "Max Reverse Speed " + str(int(revmaxspeed))
@@ -1210,25 +1211,25 @@ elif difference > 5 and targetspeed < 20 and throttlesetting > 10 : #for motors 
                                                                                                                                                                                                                                                                                                                         
                                                                                                                                                                                                                                                                                                                         
                                                                                                                                                                                                                                                                                                                         # cycle track power because some Digitrax decoders don't stop
-                                                                                                                                                                                                                                                                                                                        self.DCCPower("N",  "OFF")
-                                                                                                                                                                                                                                                                                                                        self.DCCPower("HO", "OFF")
-                                                                                                                                                                                                                                                                                                                        self.waitMsec(500)
-                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                        self.DCCPower("N",  "ON")
-                                                                                                                                                                                                                                                                                                                        self.DCCPower("HO", "ON")
-                                                                                                                                                                                                                                                                                                                        self.waitMsec(500)
-                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                            return False
+                                        self.DCCPower("N",  "OFF")
+                                        self.DCCPower("HO", "OFF")
+                                        self.waitMsec(500)
+                                        
+                                        self.DCCPower("N",  "ON")
+                                        self.DCCPower("HO", "ON")
+                                        self.waitMsec(500)
+                                            
+                                                                                                                                                                                                                                                                                                                        return False
 
-####################################################################################
-#
-# define what buttons do when clicked and attach that routine to the button
-#
-####################################################################################
-def whenMyButtonClicked(self,event) :
-    self.start()
-    # we leave the button off
-    self.startButton.enabled = False
+    ####################################################################################
+    #
+    # define what buttons do when clicked and attach that routine to the button
+    #
+    ####################################################################################
+    def whenMyButtonClicked(self,event) :
+        self.start()
+        # we leave the button off
+        self.startButton.enabled = False
         
         return
     
