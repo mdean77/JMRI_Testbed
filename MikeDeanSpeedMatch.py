@@ -202,20 +202,20 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                                    self.sensor5,
                                    self.sensor9,
                                    self.sensor13)
-                                   
+        
         self.MediumSpeedHOBlocks = 4
-                                   
+        
         self.MediumSpeedArrayN= (
                                 self.sensor1,
                                 self.sensor5,
                                 self.sensor9,
                                 self.sensor13)
-                        
+        
         self.MediumSpeedNBlocks = 3
-                                   
+        
         self.MediumSpeedThreshold = 45
         self.HighSpeedThreshold = 85
-                                   
+        
         self.LowSpeedArrayHO = (
                                self.sensor1,
                                self.sensor2,
@@ -233,9 +233,9 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                                self.sensor14,
                                self.sensor15,
                                self.sensor16)
-                                   
+        
         self.LowSpeedHOBlocks = 1
-                                   
+        
         self.LowSpeedArrayN = (
                               self.sensor1,
                               self.sensor2,
@@ -249,59 +249,43 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                               self.sensor13,
                               self.sensor14,
                               self.sensor16)
-                                   
+        
         self.LowSpeedNBlocks = 1
-                                   
+        
         self.NumSpeedMeasurements = 5
-                                   
-#        The original list was: DecoderList = ["Select Decoder", "Digitrax", "TCS", "NCE", "QSI/BLI", "Lenz Gen 5", "ESU", "Atlas/Lenz XF", "Tsunami"]
-                                   
+
+        # The original list was: DecoderList = ["Select Decoder", "Digitrax", "TCS", "NCE", "QSI/BLI", "Lenz Gen 5", "ESU", "Atlas/Lenz XF", "Tsunami"]
+        
         self.DecoderMap = {141:"Tsunami", 129:"Digitrax", 153:"TCS", 11:"NCE", 113: "QSI/BLI", 99:"Lenz Gen 5", 151:"ESU", 127:"Atlas/Lenz XF"}
         self.DecoderType = "Default"
-                                   
-                                   #        These speed steps are measured.  All others are calculated
-                                   #        CV            70    74    78    82    86    90    94
-                                   #        Speedsteps     4     8    12    16    20    24    28
-                                   
-                                   #        These lists are percentages of full speed
-                                   self.DigitraxStepList = [
-                                                            10,    22,    35,    47,    60,    72,    85]
-                                   
-                                   self.Lenz5GenStepList = [
-                                                            17,    30,    44,    57,    71,    84,    98]
-                                   
-                                   self.LenzXFStepList = [
-                                                          11,    26,    40.5,    55,    70,    84,    98.5]
-                                   
-                                   self.NCEStepList = [
-                                                       10.5,    25,    39.5,    54,    68,    83,    98]
-                                   
-                                   self.OldTCSStepList = [
-                                                          14.5,    28.5,    42.5,    57,    71.5,    86,    99]
-                                   
-                                   self.NewTCSStepList = [
-                                                          13,    25.5,    38,    50.5,    63,    75.5,    88]
-                                   
-                                   self.QSIStepList = [
-                                                       11,    26,    41,    55,    70,    85,    99]
-                                   
-                                   self.SoundtraxxDSDStepList = [
-                                                                 14,    28,    42,    56,    70,    84,    99]
-                                   
-                                   self.TsunamiStepList = [
-                                                           14.5,    28.5,    42.5,    57,    71,    85,    99]
-                                   
-                                   self.ESUStepList = [
-                                                       12,    27,    41,    56,    70,    85,    99]
-                                   return
-    ####################################################################################
-#
-# self.myCVListener() Provides an acknowledgement after a CV write operation
-#
-####################################################################################
-def myCVListener(self, value, status) :
-    self.writeLock = False
+
+        #        These speed steps are measured.  All others are calculated
+        #        CV            70    74    78    82    86    90    94
+        #        Speedsteps     4     8    12    16    20    24    28
+
+        #        These lists are percentages of full speed
+
+        self.DigitraxStepList =     [10,    22,    35,    47,    60,    72,    85]        
+        self.Lenz5GenStepList =     [17,    30,    44,    57,    71,    84,    98]        
+        self.LenzXFStepList =       [11,    26,    40.5,    55,    70,    84,    98.5]        
+        self.NCEStepList =          [10.5,    25,    39.5,    54,    68,    83,    98]        
+        self.OldTCSStepList =       [14.5,    28.5,    42.5,    57,    71.5,    86,    99]        
+        self.NewTCSStepList =       [13,    25.5,    38,    50.5,    63,    75.5,    88]        
+        self.QSIStepList =          [11,    26,    41,    55,    70,    85,    99]       
+        self.SoundtraxxDSDStepList =[14,    28,    42,    56,    70,    84,    99]       
+        self.TsunamiStepList =      [14.5,    28.5,    42.5,    57,    71,    85,    99]        
+        self.ESUStepList =          [12,    27,    41,    56,    70,    85,    99]
         return
+
+    ####################################################################################
+    #
+    # self.myCVListener() Provides an acknowledgement after a CV write operation
+    #
+    ####################################################################################
+    def myCVListener(self, value, status) :
+        self.writeLock = False
+    return
+
     ####################################################################################
     #
     # self.testbedWriteCV() Wraps the ops writes with a post write delay to give time
@@ -313,7 +297,8 @@ def myCVListener(self, value, status) :
         self.programmer.writeCV(cv, value, self.myCVListener)
         while (self.writeLock) :    # will be set to False by myCVListener()
             pass
-        return
+    return
+    
     ####################################################################################
     #
     # self.LoopActive() Returns true if there is a locomotive detected on the loop
@@ -329,41 +314,43 @@ def myCVListener(self, value, status) :
             blockSensor = sensors.provideSensor("BlockN")
             if (blockSensor.getKnownState() == CLOSED) :
                 retval = True
-        return retval
-####################################################################################
-#
-# self.DCCPower() configures the testbed power controls for HO and N loops
-#
-####################################################################################
-def DCCPower(self, Loop, Value) :
-    if (Loop == "HO"):
-        if (Value == "ON"):
-            print "Testbed HO Track Loop Powered On."
+    return retval
+    
+    ####################################################################################
+    #
+    # self.DCCPower() configures the testbed power controls for HO and N loops
+    #
+    ####################################################################################
+    def DCCPower(self, Loop, Value) :
+        if (Loop == "HO"):
+            if (Value == "ON"):
+                print ("Testbed HO Track Loop Powered On.")
                 turnouts.provideTurnout("PowerHO").setState(CLOSED)
                 pass
             elif (Value == "OFF") :
-                print "Testbed HO Track Loop Powered Off."
+                print ("Testbed HO Track Loop Powered Off.")
                 turnouts.provideTurnout("PowerHO").setState(THROWN)
                 pass
-        else :
-            print "Please select either 'ON' or 'OFF'"
+            else :
+                print ("Please select either 'ON' or 'OFF'")
                 pass
         elif (Loop == "N") :
             if (Value == "ON"):
-                print "Testbed N Track Loop Powered On."
+                print ("Testbed N Track Loop Powered On.")
                 turnouts.provideTurnout("PowerN").setState(CLOSED)
                 pass
             elif (Value == "OFF") :
-                print "Testbed N Track Loop Powered Off."
+                print ("Testbed N Track Loop Powered Off.")
                 turnouts.provideTurnout("PowerN").setState(THROWN)
                 pass
             else :
-                print "Please select either 'ON' or 'OFF'"
+                print ("Please select either 'ON' or 'OFF'")
                 pass
-else :
-    print "Please select either 'HO' or 'N' track loops"
+        else :
+            print ("Please select either 'HO' or 'N' track loops")
         pass
-        return
+    return
+    
     ####################################################################################
     #
     # self.DCCSourceSelect() configures the testbed DCC input to main or program
@@ -371,17 +358,18 @@ else :
     ####################################################################################
     def DCCSourceSelect(self, Source):
         if (Source == "MAIN") :
-            print "Testbed Track MAIN Selected"
+            print ("Testbed Track MAIN Selected")
             turnouts.provideTurnout("ProgMain").setState(CLOSED)
             pass
         elif (Source == "PROG") :
-            print "Testbed Track PROG Selected"
+            print ("Testbed Track PROG Selected")
             turnouts.provideTurnout("ProgMain").setState(THROWN)
             pass
         else :
-            print "Please select either 'MAIN' or 'PROG'"
+            print ("Please select either 'MAIN' or 'PROG'")
             pass
         return
+        
     ####################################################################################
     #
     # self.SWLed() controls the testbed software-controlled LEDs on/off
@@ -390,32 +378,33 @@ else :
     def SWLed(self, Led, Value):
         if (Led == "WHT") :
             if (Value == "ON") :
-                print "Testbed White Software LED On"
+                print ("Testbed White Software LED On")
                 turnouts.provideTurnout("SWLEDWHT").setState(CLOSED)
                 pass
             elif (Value == "OFF") :
-                print "Testbed White Software LED Off"
+                print ("Testbed White Software LED Off")
                 turnouts.provideTurnout("SWLEDWHT").setState(THROWN)
                 pass
             else :
-                print "Please select either 'ON' or 'OFF'"
+                print ("Please select either 'ON' or 'OFF'")
                 pass
         elif (Led == "BLU") :
             if (Value == "ON") :
-                print "Testbed Blue Software LED On"
+                print ("Testbed Blue Software LED On")
                 turnouts.provideTurnout("SWLEDBLU").setState(CLOSED)
                 pass
             elif (Value == "OFF") :
-                print "Testbed Blue Software LED Off"
+                print ("Testbed Blue Software LED Off")
                 turnouts.provideTurnout("SWLEDBLU").setState(THROWN)
                 pass
             else :
-                print "Please select either 'ON' or 'OFF'"
+                print ("Please select either 'ON' or 'OFF'")
                 pass
         else :
-            print "Please select either 'WHT' or 'BLU' Led"
+            print ("Please select either 'WHT' or 'BLU' Led")
             pass
         return
+        
     ####################################################################################
     #
     # self.TrackNormal() configures the testbed to turn the main DCC power to both loops
@@ -434,6 +423,7 @@ else :
         self.DCCPower("N", "ON")
         self.waitMsec(500)
         return
+        
     ####################################################################################
     #
     # self.TrackProgram() configures the testbed to select the DCC program on both loops
@@ -453,6 +443,7 @@ else :
         self.SWLed("WHT", "ON")
         self.waitMsec(500)
         return
+        
     ####################################################################################
     #
     # self.waitNextActive() configures the testbed to turn the main DCC power to both loops
@@ -471,6 +462,7 @@ else :
                     inactivesensors.append(s)
         self.waitSensorActive(inactivesensors)
         return
+        
     ####################################################################################
     #
     # self.measureTime() is used as part of the speed measurement
@@ -502,19 +494,20 @@ else :
         stoptime = java.lang.System.currentTimeMillis()
         
         runtime = stoptime - starttime
-                return runtime, starttime, stoptime
-            ####################################################################################
-#
-# self.getSpeed() is used as part of the speed measurement
-#
-# This takes several speed measurements and returns an average value. If more than
-# 3 values are given, the min and max values are omitted from the average.
-# The final speed value returned is an average of the remaining values.
-#
-####################################################################################
-def getSpeed(self, speedlist) :
+        return runtime, starttime, stoptime
+        
+    ####################################################################################
+    #
+    # self.getSpeed() is used as part of the speed measurement
+    #
+    # This takes several speed measurements and returns an average value. If more than
+    # 3 values are given, the min and max values are omitted from the average.
+    # The final speed value returned is an average of the remaining values.
+    #
+    ####################################################################################
+    def getSpeed(self, speedlist) :
     
-    imin = imax = 0
+        imin = imax = 0
         minval = maxval = 0.0
         
         if (self.NumSpeedMeasurements > 3):
@@ -532,20 +525,21 @@ def getSpeed(self, speedlist) :
                 del speedlist[imax]
                 del speedlist[imin]
     
-    speed = sum(speedlist)/len(speedlist)
+        speed = sum(speedlist)/len(speedlist)
         return speed
-####################################################################################
-#
-# self.measureSpeed() performs the speed measurement algorithm
-#
-# Given which track loop and the length of a block, we can measure the speed by
-# measuring the time through each block. This version takes several measurements and
-# averaging them, throwing out the high and low values.
-#
-# The targetspeed parameter is used to select the appropriate sensor array
-####################################################################################
-def measureSpeed(self, targetspeed, block, scale) :
-    """converts time to speed, ft/sec - scale speed"""
+    
+    ####################################################################################
+    #
+    # self.measureSpeed() performs the speed measurement algorithm
+    #
+    # Given which track loop and the length of a block, we can measure the speed by
+    # measuring the time through each block. This version takes several measurements and
+    # averaging them, throwing out the high and low values.
+    #
+    # The targetspeed parameter is used to select the appropriate sensor array
+    ####################################################################################
+    def measureSpeed(self, targetspeed, block, scale) :
+        """converts time to speed, ft/sec - scale speed"""
         starttime = stoptime = 0    # Needed when using every block
         speed = 0.0
         speedlist = []
@@ -562,7 +556,7 @@ def measureSpeed(self, targetspeed, block, scale) :
             else:
                 num_blocks = self.HighSpeedHOBlocks
                 sensor_array = self.HighSpeedArrayHO
-            print "Measuring speed using the high speed array,", num_blocks, "block(s)..."
+            print ("Measuring speed using the high speed array,", num_blocks, "block(s)...")
         elif (int(targetspeed) >= self.MediumSpeedThreshold) :
             if (scale == "N"):
                 num_blocks = self.MediumSpeedNBlocks
@@ -570,15 +564,15 @@ def measureSpeed(self, targetspeed, block, scale) :
             else:
                 num_blocks = self.MediumSpeedHOBlocks
                 sensor_array = self.MediumSpeedArrayHO
-            print "Measuring speed using the medium speed array,", num_blocks, "block(s)..."
-    else:
-        if (scale == "N"):
-            num_blocks = self.LowSpeedNBlocks
+            print ("Measuring speed using the medium speed array,", num_blocks, "block(s)...")
+        else:
+            if (scale == "N"):
+                num_blocks = self.LowSpeedNBlocks
                 sensor_array = self.LowSpeedArrayN
             else:
                 num_blocks = self.LowSpeedHOBlocks
                 sensor_array = self.LowSpeedArrayHO
-        print "Measuring speed using the low speed array,", num_blocks, "block(s)..."
+            print ("Measuring speed using the low speed array,", num_blocks, "block(s)...")
         
         # Calculate the length of the selected block
         
@@ -587,24 +581,23 @@ def measureSpeed(self, targetspeed, block, scale) :
         # Measure the speed a number of times and put those speeds into a list
         
         for z in range(0,self.NumSpeedMeasurements) : # make 5 speed measurements
-            duration, starttime, stoptime = self.measureTime(sensor_array,starttime,stoptime)
-            
+            duration, starttime, stoptime = self.measureTime(sensor_array,starttime,stoptime)          
             if duration == 0 :
-                print "Error: Got a zero for duration" # this should not happen
+                print ("Error: Got a zero for duration") # this should not happen
                 speed = 0.0
             else :
                 speed = (blocklength / (duration / 1000.0)) * (3600.0 / 5280)
-                print "    Measurement ", z+1, ", Speed = ", str(round(speed,3)) , "MPH"
+                print ("    Measurement ", z+1, ", Speed = ", str(round(speed,3)) , "MPH")
                 self.status.text = "Speed = " + str(round(speed,3)) + " MPH"
             speedlist.append(speed)
-
-speed = self.getSpeed(speedlist)
-return speed
-    ####################################################################################
-    #
-    # self.handle() will only be execute once here, to run a single test
-    #
-    ####################################################################################
+            speed = self.getSpeed(speedlist)
+        return speed
+    
+####################################################################################
+#
+# self.handle() will only be execute once here, to run a single test
+#
+####################################################################################
     def handle(self):
         
         long = False
@@ -614,7 +607,7 @@ return speed
         mfrVersion = 0
         
         # 01/02/2017 ECW: Ported to Erich's setup starting with v2.2
-        print "Speed Table Script Version", self.scriptversion
+        print ("Speed Table Script Version", self.scriptversion)
         
         topspeed = float(self.MaxSpeed.text)/100
         print "Top Target Speed is ", self.MaxSpeed.text, "MPH"
