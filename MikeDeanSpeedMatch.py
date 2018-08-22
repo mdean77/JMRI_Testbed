@@ -337,30 +337,30 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 	def DCCPower(self, Loop, Value) :
 		if (Loop == "HO"): 
 			if (Value == "ON"):
-				print "Testbed HO Track Loop Powered On."
+				print ("Testbed HO Track Loop Powered On.")
 				turnouts.provideTurnout("PowerHO").setState(CLOSED)
 				pass
 			elif (Value == "OFF") :
-				print "Testbed HO Track Loop Powered Off."
+				print ("Testbed HO Track Loop Powered Off.")
 				turnouts.provideTurnout("PowerHO").setState(THROWN)
 				pass
 			else :
-				print "Please select either 'ON' or 'OFF'"
+				print ("Please select either 'ON' or 'OFF'")
 				pass
 		elif (Loop == "N") :
 			if (Value == "ON"):
-				print "Testbed N Track Loop Powered On."
+				print ("Testbed N Track Loop Powered On.")
 				turnouts.provideTurnout("PowerN").setState(CLOSED)
 				pass
 			elif (Value == "OFF") :
-				print "Testbed N Track Loop Powered Off."
+				print ("Testbed N Track Loop Powered Off.")
 				turnouts.provideTurnout("PowerN").setState(THROWN)
 				pass
 			else :
-				print "Please select either 'ON' or 'OFF'"
+				print ("Please select either 'ON' or 'OFF'")
 				pass
 		else :
-			print "Please select either 'HO' or 'N' track loops"
+			print ("Please select either 'HO' or 'N' track loops")
 			pass
 		return
 ####################################################################################
@@ -370,15 +370,15 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################	
 	def DCCSourceSelect(self, Source):
 		if (Source == "MAIN") :
-			print "Testbed Track MAIN Selected"
+			print ("Testbed Track MAIN Selected")
 			turnouts.provideTurnout("ProgMain").setState(CLOSED)
 			pass
 		elif (Source == "PROG") :
-			print "Testbed Track PROG Selected"
+			print ("Testbed Track PROG Selected")
 			turnouts.provideTurnout("ProgMain").setState(THROWN)
 			pass
 		else :
-			print "Please select either 'MAIN' or 'PROG'"
+			print ("Please select either 'MAIN' or 'PROG'")
 			pass
 		return
 ####################################################################################
@@ -389,30 +389,30 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 	def SWLed(self, Led, Value):
 		if (Led == "WHT") :
 			if (Value == "ON") :
-				print "Testbed White Software LED On"
+				print ("Testbed White Software LED On")
 				turnouts.provideTurnout("SWLEDWHT").setState(CLOSED)
 				pass
 			elif (Value == "OFF") :
-				print "Testbed White Software LED Off"
+				print ("Testbed White Software LED Off")
 				turnouts.provideTurnout("SWLEDWHT").setState(THROWN)
 				pass
 			else :
-				print "Please select either 'ON' or 'OFF'"
+				print ("Please select either 'ON' or 'OFF'")
 				pass
 		elif (Led == "BLU") :
 			if (Value == "ON") :
-				print "Testbed Blue Software LED On"
+				print ("Testbed Blue Software LED On")
 				turnouts.provideTurnout("SWLEDBLU").setState(CLOSED)
 				pass
 			elif (Value == "OFF") :
-				print "Testbed Blue Software LED Off"
+				print ("Testbed Blue Software LED Off")
 				turnouts.provideTurnout("SWLEDBLU").setState(THROWN)
 				pass
 			else :
-				print "Please select either 'ON' or 'OFF'"
+				print ("Please select either 'ON' or 'OFF'")
 				pass
 		else :
-			print "Please select either 'WHT' or 'BLU' Led"
+			print ("Please select either 'WHT' or 'BLU' Led")
 			pass
 		return
 ####################################################################################
@@ -561,7 +561,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			else:
 				num_blocks = self.HighSpeedHOBlocks
 				sensor_array = self.HighSpeedArrayHO
-			print "Measuring speed using the high speed array,", num_blocks, "block(s)..."
+			print ("Measuring speed using the high speed array,", num_blocks, "block(s)...")
 		elif (int(targetspeed) >= self.MediumSpeedThreshold) :
 			if (scale == "N"):
 				num_blocks = self.MediumSpeedNBlocks
@@ -569,7 +569,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			else:
 				num_blocks = self.MediumSpeedHOBlocks
 				sensor_array = self.MediumSpeedArrayHO
-			print "Measuring speed using the medium speed array,", num_blocks, "block(s)..."
+			print ("Measuring speed using the medium speed array,", num_blocks, "block(s)...")
 		else:
 			if (scale == "N"):
 				num_blocks = self.LowSpeedNBlocks
@@ -577,7 +577,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			else:
 				num_blocks = self.LowSpeedHOBlocks
 				sensor_array = self.LowSpeedArrayHO
-			print "Measuring speed using the low speed array,", num_blocks, "block(s)..."
+			print ("Measuring speed using the low speed array,", num_blocks, "block(s)...")
 
             # Calculate the length of the selected block
 			
@@ -589,11 +589,11 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			duration, starttime, stoptime = self.measureTime(sensor_array,starttime,stoptime)
 
 			if duration == 0 :
-				print "Error: Got a zero for duration" # this should not happen
+				print ("Error: Got a zero for duration") # this should not happen
 				speed = 0.0
 			else :
 				speed = (blocklength / (duration / 1000.0)) * (3600.0 / 5280)
-				print "    Measurement ", z+1, ", Speed = ", str(round(speed,3)) , "MPH"
+				print ("    Measurement ", z+1, ", Speed = ", str(round(speed,3)) , "MPH")
 				self.status.text = "Speed = " + str(round(speed,3)) + " MPH"
 			speedlist.append(speed)
 
@@ -613,53 +613,53 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		mfrVersion = 0
 				
 		# 01/02/2017 ECW: Ported to Erich's setup starting with v2.2
-		print "Speed Table Script Version", self.scriptversion
+		print ("Speed Table Script Version", self.scriptversion)
 
 		topspeed = float(self.MaxSpeed.text)/100
-		print "Top Target Speed is ", self.MaxSpeed.text, "MPH"
+		print ("Top Target Speed is ", self.MaxSpeed.text, "MPH")
 		self.status.text = "Locomotive Setup"
 		self.memory25.value = "Preparing Locomotive for speed measurments"
 
 		self.TrackNormal()
 
 		if (self.LoopActive("HO") and self.LoopActive("N")) :
-			print "Only ONE track loop can be active at a time!"
+			print ("Only ONE track loop can be active at a time!")
 			return
 		if (self.LoopActive("HO")) :
 			self.status.text = "HO Scale Locomotive Detected"
-			print "Locomotive found on HO track loop"
+			print ("Locomotive found on HO track loop")
 			self.block = self.blockHO
 			self.scale = "HO"
 			pass	
 		elif (self.LoopActive("N")) :
 			self.status.text = "N Scale Locomotive Detected"
-			print "Locomotive found on N track loop"
+			print ("Locomotive found on N track loop")
 			self.block = self.blockN
 			self.scale = "N"
 			pass
 		else :
-			print "No locomotive detected, cannot proceed"
+			print ("No locomotive detected, cannot proceed")
 			return
 			
 		self.TrackProgram()	
 
-		print "Reading Locomotive..."
+		print ("Reading Locomotive...")
 		self.val29 = self.readServiceModeCV("29")
-		print "CV 29 = ", self.val29
+		print ("CV 29 = ", self.val29)
 		self.val1 = self.readServiceModeCV("1")
-		print "CV 1 = ", self.val1
+		print ("CV 1 = ", self.val1)
 		self.val17 = self.readServiceModeCV("17")
-		print "CV 17 = ", self.val17
+		print ("CV 17 = ", self.val17)
 		self.val18 = self.readServiceModeCV("18")
-		print "CV 18 = ", self.val18
+		print ("CV 18 = ", self.val18)
 		self.val7 = self.readServiceModeCV("7")
-		print "CV 7 = ", self.val7
+		print ("CV 7 = ", self.val7)
 		self.val8 = self.readServiceModeCV("8")
-		print "CV 8 = ", self.val8
+		print ("CV 8 = ", self.val8)
 		self.val105 = self.readServiceModeCV("105")
-		print "CV 105 = ", self.val105
+		print ("CV 105 = ", self.val105)
 		self.val106 = self.readServiceModeCV("106")
-		print "CV 106 = ", self.val106
+		print ("CV 106 = ", self.val106)
 		
 		# Determine if this locomotive uses a long address
 		if ((self.val29 & 32) == 32) :
@@ -679,11 +679,11 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		else:
 			self.DecoderType = "Unknown"
 			
-		print "The Locomotive Address is: ", self.address
-		print "The Manufacturer is: ", self.DecoderType
-		print "The Manufacturer ID is: ", self.mfrID
-		print "The Manufacturer Version is: ", self.mfrVersion
-		print "The Current Private ID is ", self.val105, ", ", self.val106
+		print ("The Locomotive Address is: ", self.address)
+		print ("The Manufacturer is: ", self.DecoderType)
+		print ("The Manufacturer ID is: ", self.mfrID)
+		print ("The Manufacturer Version is: ", self.mfrVersion)
+		print ("The Current Private ID is ", self.val105, ", ", self.val106)
 
 		self.TrackNormal()	
 
@@ -701,9 +701,9 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		self.throttle = self.getThrottle(self.address, self.long)
 		if (self.throttle == None) :
-			print "ERROR: Couldn't assign throttle!"
+			print ("ERROR: Couldn't assign throttle!")
 		else :
-			print "Trottle assigned to locomotive: ", self.address
+			print ("Trottle assigned to locomotive: ", self.address)
 
             # Getting Programmer
 
@@ -711,9 +711,9 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		self.SWLed("BLU", "ON")
 
-		print "Turn on the headlight"
+		print ("Turn on the headlight")
 		self.throttle.setF0(True)
-		print "Mute the sound"
+		print ("Mute the sound")
 		self.throttle.setF8(True)
 	
 		starttesttime = java.lang.System.currentTimeMillis()
@@ -741,9 +741,9 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			self.val106 = self.val106+1
 			self.testbedWriteCV(106, self.val106) # Write count in Decoder CV 106
 
-		print "Set Private ID to ", self.val105, ", ", self.val106
+		print ("Set Private ID to ", self.val105, ", ", self.val106)
 
-		print "Decoder Brand is", self.DecoderType
+		print ("Decoder Brand is", self.DecoderType)
 		self.memory23.value = self.DecoderType
  		
 		self.memory25.value = "Setting CVs to known state"
@@ -769,24 +769,24 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.memory25.value = "Warming up Locomotive"
 		self.status.text = "Warming up Locomotive"
 		print
-		print "Warming up Locomotive"
+		print ("Warming up Locomotive")
 		self.throttle.setIsForward(True)
 		self.memory20.value = "Forward"
 
 		#01/09/09	TCS decoder would not move when setting throttle to 1.0
  
- 		print "Set the throttle to 1.0"
+ 		print ("Set the throttle to 1.0")
 
 		self.throttle.setSpeedSetting(.99)
 		self.waitMsec(250)
 		self.throttle.setSpeedSetting(1.0)
 
-		print "Wait for the locomotive to get to block", self.homesensor_num, "after", self.warmupLaps, "laps..."
+		print ("Wait for the locomotive to get to block", self.homesensor_num, "after", self.warmupLaps, "laps...")
 
 		for x in range (0, self.warmupLaps) :
 			self.waitNextActiveSensor([self.homesensor])
 
-		print "Stop the locomotive"
+		print ("Stop the locomotive")
 		self.throttle.setSpeedSetting(0.0)
 		self.waitMsec(2000)
 		
@@ -797,21 +797,21 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			self.memory20.value = "Reverse"
 			self.throttle.setSpeedSetting(1.0)
 
-			print "Warming up in the reverse direction for", self.warmupLaps, "laps..."
+			print ("Warming up in the reverse direction for", self.warmupLaps, "laps...")
 			for x in range (0, self.warmupLaps) :
 				self.waitNextActiveSensor([self.homesensor])
 
 		# Find maximum speed reverse
 
-			print "Finding the maximum reverse speed..."
+			print ("Finding the maximum reverse speed...")
 			self.memory25.value = "Finding Maximum Reverse Speed"
 			self.status.text = "Finding Maximum Reverse Speed"
 			self.throttle.setSpeedSetting(1.0)
 			self.waitMsec(500)
 			revmaxspeed = self.measureSpeed(100, self.block, self.scale)
-			print "Maximum reverse speed found = ",round(revmaxspeed)
+			print ("Maximum reverse speed found = ",round(revmaxspeed))
 			print
-			print "Returning locomotive to block", self.homesensor_num, "..."
+			print ("Returning locomotive to block", self.homesensor_num, "...")
 			self.waitNextActiveSensor([self.homesensor])
 			self.throttle.setSpeedSetting(0.0)
 			self.status.text = "Max Reverse Speed " + str(int(revmaxspeed))
@@ -825,16 +825,16 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		
 		self.memory25.value = "Finding Maximum Forward Speed"
 		self.status.text = "Finding Maximum Forward Speed"
-		print "Finding the maximum forward speed over", self.NumSpeedMeasurements, "laps..."
+		print ("Finding the maximum forward speed over", self.NumSpeedMeasurements, "laps...")
 		self.throttle.setIsForward(True)
 		self.waitMsec(500)
 		self.memory20.value = "Forward"
 		self.throttle.setSpeedSetting(1.0)
 		self.waitMsec(1000)
 		fwdmaxspeed = self.measureSpeed(100, self.block, self.scale)
-		print "Maximum forward speed found = ",round(fwdmaxspeed)
+		print ("Maximum forward speed found = ",round(fwdmaxspeed))
 		print
-		print "Returning locomotive to block", self.homesensor_num, "..."
+		print ("Returning locomotive to block", self.homesensor_num, "...")
 		self.waitNextActiveSensor([self.homesensor])
 		
 		self.throttle.setSpeedSetting(0.0)
@@ -843,17 +843,17 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.waitMsec(1000)
 
 		if (fwdmaxspeed > revmaxspeed) :
-			print "Locomotive",self.address,"is faster in the forward direction"
+			print ("Locomotive",self.address,"is faster in the forward direction")
 			self.throttle.setIsForward(True)
 			self.waitMsec(500)
 			self.memory20.value = "Forward"
 		elif (revmaxspeed > fwdmaxspeed) :
-			print "Locomotive",self.address,"is faster in the reverse direction"
+			print ("Locomotive",self.address,"is faster in the reverse direction")
 			self.throttle.setIsForward(False)
 			self.waitMsec(500)
 			self.memory20.value = "Reverse"
 		else :
-			print "Locomotive",self.address,"runs equally well in both directions"
+			print ("Locomotive",self.address,"runs equally well in both directions")
 			self.throttle.setIsForward(True)
 			self.waitMsec(500)
 			self.memory20.value = "Forward"
@@ -861,7 +861,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		print
 		self.memory23.value = self.DecoderType
-		print "Decoder Brand is ",self.DecoderType
+		print ("Decoder Brand is ",self.DecoderType)
 
 		if self.DecoderType == "Digitrax" :
 			steplist = self.DigitraxStepList 
@@ -869,7 +869,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			#09/15/09
 			self.memory25.value = "Determining Type of TCS Decoder"
 			self.status.text = "Determining Type of TCS Decoder"
-			print "Determining Type of TCS Decoder"
+			print ("Determining Type of TCS Decoder")
 
 			# Set speed table CV's to determine which type of TCS decoder it is
 	
@@ -888,10 +888,10 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			self.throttle.setSpeedSetting(0.0)
 			if speed > (.9 * fwdmaxspeed) :
 				steplist = self.NewTCSStepList
-				print "Using new TCS steplist"
+				print ("Using new TCS steplist")
 			else :
 				steplist = self.OldTCSStepList
-				print "Using old TCS steplist"
+				print ("Using old TCS steplist")
 			self.waitMsec(3000)
 
 		elif self.DecoderType == "Lenz5Gen" :
@@ -911,7 +911,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			steplist = self.ESUStepList
 		else :	#User doesn't know decoder type
 				#and we couldn't figure it out 
-			print "Decoder is still unknown"
+			print ("Decoder is still unknown")
 		self.throttle.setSpeedSetting(0.0)
 		self.waitMsec(2000)
 
@@ -953,7 +953,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 				targetspeed = round(speedvalue * topspeed)		
 
 				print
-				print "Target Speed ",targetspeed
+				print ("Target Speed ",targetspeed)
 				print
 
 				stepvaluelist.extend([0,0,0]) #create spots in list for calculated speed steps
@@ -971,7 +971,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
                 #05/21/10
 				if ((self.Locomotive.getSelectedItem() == "Diesel") and (targetspeed > revmaxspeed)) or targetspeed > fwdmaxspeed :
 					print
-					print "Locomotive can not reach ",targetspeed, " MPH"
+					print ("Locomotive can not reach ",targetspeed, " MPH")
 					print
 					Done = True
 					throttlesetting = 127
@@ -982,19 +982,19 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 					self.throttle.setSpeedSetting(.0079365 * throttlesetting)
 					self.waitMsec(100)
 					print
-					print "Throttle Setting ",throttlesetting
+					print ("Throttle Setting ",throttlesetting)
 					speed = self.measureSpeed(targetspeed, self.block, self.scale)
  
 					# compare it to desired speed and decide whether or not to test a different throttle setting
 					difference = targetspeed - speed
-					print "Measured Speed = ",round(speed,3), "Difference = ",round(speed - targetspeed,3), " at throttle setting ",throttlesetting
+					print ("Measured Speed = ",round(speed,3), "Difference = ",round(speed - targetspeed,3), " at throttle setting ",throttlesetting)
 
 					#Coarse Measurement
 					if difference < -10 and targetspeed < 20 and throttlesetting > 15 : #started at 35 want to drop fast to reduce time
 						hithrottle = throttlesetting
 						throttlesetting = throttlesetting - 10
 						if throttlesetting < lowthrottle :
-							print "throttlesetting ",throttlesetting,"is too slow"
+							print ("throttlesetting ",throttlesetting,"is too slow")
 							throttlesetting = lowthrottle + 1
                             #09/17/09
 							if hithrottle-lowthrottle < 2 :
@@ -1008,7 +1008,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 						hithrottle = throttlesetting
 						throttlesetting = throttlesetting - 6	 # and don't want drastic changes
 						if throttlesetting < lowthrottle :
-							print "throttlesetting ",throttlesetting,"is too slow"
+							print ("throttlesetting ",throttlesetting,"is too slow")
                             #08/29/09 This didn't resolve the issue			throttlesetting = lowthrottle
                             #12-05-08 Having problems with some BEMF decoders	throttlesetting = lowthrottle + 1
 							throttlesetting = lowthrottle + 1
@@ -1024,7 +1024,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 						hithrottle = throttlesetting
 						throttlesetting = throttlesetting - 3
 						if throttlesetting < lowthrottle :
-							print "throttlesetting ",throttlesetting,"is too slow"
+							print ("throttlesetting ",throttlesetting,"is too slow")
 							throttlesetting = lowthrottle + 1
                             #09/17/09
 							if hithrottle-lowthrottle < 2 :
@@ -1038,19 +1038,19 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 						lowthrottle = throttlesetting
 						throttlesetting = throttlesetting + 7
 						if throttlesetting > hithrottle :
-							print "throttlesetting ",throttlesetting,"is too fast"
+							print ("throttlesetting ",throttlesetting,"is too fast")
 							throttlesetting = hithrottle - 1
 					elif difference > 8 and throttlesetting < 123 : # keep throtte setting < 128
 						lowthrottle = throttlesetting
 						throttlesetting = throttlesetting + 4
 						if throttlesetting > hithrottle :
-							print "throttlesetting ",throttlesetting,"is too fast"
+							print ("throttlesetting ",throttlesetting,"is too fast")
 							throttlesetting = hithrottle - 1
 					elif difference > 5 and targetspeed < 20 and throttlesetting > 10 : #for motors that need a lot at the beginning
 						lowthrottle = throttlesetting
 						throttlesetting = throttlesetting + 5
 						if throttlesetting > hithrottle :
-							print "throttlesetting ",throttlesetting,"is too fast"
+							print ("throttlesetting ",throttlesetting,"is too fast")
 							throttlesetting = hithrottle - 1
 
 					else :
@@ -1063,7 +1063,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 							throttlesetting = savethrottlesetting
 							lowthrottle = throttlesetting + 1
                             #09/11/08	added print
-							print "Closest throttle setting is", throttlesetting
+							print ("Closest throttle setting is", throttlesetting)
                             #09/22/08
 
 						if difference < 0  and Done != True :
@@ -1080,8 +1080,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 					if throttlesetting < 1 :
 						print
-						print "Cannot create speedtable"
-						print "Locomotive has mechanical or decoder problem"
+						print ("Cannot create speedtable")
+						print ("Locomotive has mechanical or decoder problem")
 						print
 						Done = True
 						badlocomotive = True
@@ -1090,7 +1090,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 	
 					if throttlesetting > 127 :
 						print
-						print "Locomotive can not reach ",targetspeed, " MPH"
+						print ("Locomotive can not reach ",targetspeed, " MPH")
 						print
 						Done = True
 						throttlesetting = 127
@@ -1117,8 +1117,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 			if badlocomotive == False :
 				print
-				print "Measured Values"
-				print stepvaluelist
+				print ("Measured Values")
+				print (stepvaluelist)
 
 				if stepvaluelist[4] < 4 :
 					stepvaluelist[4] = 4
@@ -1150,8 +1150,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 				if self.DecoderType == "TCS" :
 					print
-					print "Values before TCS correction"
-					print stepvaluelist
+					print ("Values before TCS correction")
+					print (stepvaluelist)
 					counter = 0
 					for  z in range (21, 29, 1) :
                         #						print "z= ",z," ",stepvaluelist[z],"counter = ",counter
@@ -1160,8 +1160,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 						counter = counter + 1
 
 				print
-				print "All Values"
-				print stepvaluelist
+				print ("All Values")
+				print (stepvaluelist)
 
 				self.memory25.value = "Writing Speed Table to Locomotive"
 
@@ -1197,9 +1197,9 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.throttle.setF0(False)
 		endtesttime = java.lang.System.currentTimeMillis()
 		print
-		print "Test Time =",(endtesttime - starttesttime) / 1000, "sec."
+		print ("Test Time =",(endtesttime - starttesttime) / 1000, "sec.")
 
-		print "Return to the home position"
+		print ("Return to the home position")
 		self.throttle.setSpeedSetting(1.0)
 		self.waitChange([self.sensor1])
 		self.waitSensorActive(self.sensor1)
