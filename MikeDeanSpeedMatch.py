@@ -84,6 +84,7 @@
 #	05/21/10	warmup for steam now only goes forward
 #	11/05/17	Ported to Erich Whitney's Speed Calibration Testbed (NCE and C/MRI) setup with KATO track both N and HO
 #   07/07/18	Changed to cpOD Block Detectors and rewrote speed measurement code
+#   08/22/18    JMD changes to version 3.0 which will be N scale only.
 # 
 # Memory Location Mapping
 #====================================================== 
@@ -131,40 +132,33 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################	
 	def init(self) :
 	    # individual block section length (scale feet)
-		self.scriptversion = 2.23
-		self.blockN = float(132.65)  # 132.65 feet Erich's Speed Matching Track Kato Unitrack 19" Radius - 12 Sections / 24 Pieces
-		self.blockHO = float(61.64)  #  61.64 feet Erich's Speed Matching Track Kato Unitrack 21 5/8" Radius - 16 Sections / 16 Pieces
-
+		self.scriptversion = 3.0
+		self.block = float(132.65)  # 132.65 feet Erich's Speed Matching Track Kato Unitrack 19" Radius - 12 Sections / 24 Pieces
+		self.NumSpeedMeasurements = 5
 		self.long = False
 		self.addr = 0
-		self.scale = ""
-		self.block = 0.0
-		self.type = ""
 		self.warmupLaps = 5
-		self.homesensor_num = "12"
 		self.programmer = None
 		self.throttle = None
 		self.writeLock = False
+		self.fullSpeed = 100
 
-		self.homesensor = sensors.provideSensor("Block:%s" % self.homesensor_num)
-
-		self.sensor1 = sensors.provideSensor("Block:12")
-		self.sensor2 = sensors.provideSensor("Block:13")
-		self.sensor3 = sensors.provideSensor("Block:14")
-		self.sensor4 = sensors.provideSensor("Block:15")
-		self.sensor5 = sensors.provideSensor("Block:16")
-		self.sensor6 = sensors.provideSensor("Block:1")
-		self.sensor7 = sensors.provideSensor("Block:2")
-		self.sensor8 = sensors.provideSensor("Block:3")
-		self.sensor9 = sensors.provideSensor("Block:4")
-		self.sensor10 = sensors.provideSensor("Block:5")
-		self.sensor11 = sensors.provideSensor("Block:6")
-		self.sensor12 = sensors.provideSensor("Block:7")
-		self.sensor13 = sensors.provideSensor("Block:8")
-		self.sensor14 = sensors.provideSensor("Block:9")
-		self.sensor15 = sensors.provideSensor("Block:10")
-		self.sensor16 = sensors.provideSensor("Block:11")
-
+		# JMD:  I changed the sensor numbering since I will only have 12 blocks.
+		self.sensor1 = sensors.provideSensor("Block:1")
+		self.sensor2 = sensors.provideSensor("Block:2")
+		self.sensor3 = sensors.provideSensor("Block:3")
+		self.sensor4 = sensors.provideSensor("Block:4")
+		self.sensor5 = sensors.provideSensor("Block:5")
+		self.sensor6 = sensors.provideSensor("Block:6")
+		self.sensor7 = sensors.provideSensor("Block:7")
+		self.sensor8 = sensors.provideSensor("Block:8")
+		self.sensor9 = sensors.provideSensor("Block:9")
+		self.sensor10 = sensors.provideSensor("Block:10")
+		self.sensor11 = sensors.provideSensor("Block:11")
+		self.sensor12 = sensors.provideSensor("Block:12")
+		self.homesensor = sensors.provideSensor("Block:12")
+		
+		
 		self.memory1 = memories.provideMemory("1")
 		self.memory2 = memories.provideMemory("2")
 		self.memory3 = memories.provideMemory("3")
@@ -188,34 +182,23 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.memory24 = memories.provideMemory("24")
 		self.memory25 = memories.provideMemory("25")
 
-		# every other sensor on each loop
-		self.HighSpeedArrayHO = [self.homesensor]
+		# Different block sizes for different speeds or it would take
+		# forever to do the low speed if loco had to circle whole track
+		# for every measurement.
 
-		self.HighSpeedHOBlocks = 16
+		self.HighSpeedNBlocks = 12
+		self.MediumSpeedNBlocks = 3		
+		self.LowSpeedNBlocks = 1
 
 		self.HighSpeedArrayN = [self.homesensor]
 
-		self.HighSpeedNBlocks = 12
-		
-		self.MediumSpeedArrayHO = (
-				self.sensor1,
-				self.sensor5,
-				self.sensor9,
-				self.sensor13)
-
-		self.MediumSpeedHOBlocks = 4
-		
 		self.MediumSpeedArrayN= (
 				self.sensor1,
-				self.sensor5,
-				self.sensor9,
-				self.sensor13)
-		self.MediumSpeedNBlocks = 3
+				self.sensor4,
+				self.sensor7,
+				self.sensor10)
 
-		self.MediumSpeedThreshold = 45
-		self.HighSpeedThreshold = 85
-				
-		self.LowSpeedArrayHO = (
+		self.LowSpeedArrayN = (
 				self.sensor1,
 				self.sensor2,
 				self.sensor3,
@@ -227,72 +210,31 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 				self.sensor9,
 				self.sensor10,
 				self.sensor11,
-				self.sensor12,
-				self.sensor13,
-				self.sensor14,
-				self.sensor15,
-				self.sensor16)
-
-		self.LowSpeedHOBlocks = 1
-		
-		self.LowSpeedArrayN = (
-				self.sensor1,
-				self.sensor2,
-				self.sensor4,
-				self.sensor5,
-				self.sensor6,
-				self.sensor8,
-				self.sensor9,
-				self.sensor10,
-				self.sensor12,
-				self.sensor13,
-				self.sensor14,
-				self.sensor16)
+				self.sensor12)
 				
-		self.LowSpeedNBlocks = 1
+		self.MediumSpeedThreshold = 45
+		self.HighSpeedThreshold = 85
 		
-		self.NumSpeedMeasurements = 5
-		
-        #		The original list was: DecoderList = ["Select Decoder", "Digitrax", "TCS", "NCE", "QSI/BLI", "Lenz Gen 5", "ESU", "Atlas/Lenz XF", "Tsunami"] 
-
 		self.DecoderMap = {141:"Tsunami", 129:"Digitrax", 153:"TCS", 11:"NCE", 113: "QSI/BLI", 99:"Lenz Gen 5", 151:"ESU", 127:"Atlas/Lenz XF"}
 		self.DecoderType = "Default"
 
-        #		These speed steps are measured.  All others are calculated
-        #		CV			70	74	78	82	86	90	94
-        #		Speedsteps	 4	 8	12	16	20	24	28
+		#	These speed steps are measured.  All others are calculated
+		#	CV			70	74	78	82	86	90	94
+		#	Speedsteps	 4	 8	12	16	20	24	28
 
-        #		These lists are percentages of full speed
-		self.DigitraxStepList = [
-				10,	22,	35,	47,	60,	72,	85]
-
-		self.Lenz5GenStepList = [
-				17,	30,	44,	57,	71,	84,	98]
-
-		self.LenzXFStepList = [
-				11,	26,	40.5,	55,	70,	84,	98.5]
-
-		self.NCEStepList = [
-				10.5,	25,	39.5,	54,	68,	83,	98]
-
-		self.OldTCSStepList = [
-				14.5,	28.5,	42.5,	57,	71.5,	86,	99]
-
-		self.NewTCSStepList = [
-				13,	25.5,	38,	50.5,	63,	75.5,	88]
-
-		self.QSIStepList = [
-				11,	26,	41,	55,	70,	85,	99]
-
-		self.SoundtraxxDSDStepList = [
-				14,	28,	42,	56,	70,	84,	99]
-
-		self.TsunamiStepList = [
-				14.5,	28.5,	42.5,	57,	71,	85,	99]
-
-		self.ESUStepList = [
-				12,	27,	41,	56,	70,	85,	99]
+		#	These lists are percentages of full speed
+		self.DigitraxStepList = [10, 22, 35, 47, 60, 72, 85]
+		self.Lenz5GenStepList = [17, 30, 44, 57, 71, 84, 98]
+		self.LenzXFStepList = [11, 26, 40.5, 55, 70, 84, 98.5]
+		self.NCEStepList = [10.5, 25, 39.5, 54,	68,	83,	98]
+		self.OldTCSStepList = [14.5, 28.5, 42.5, 57, 71.5, 86, 99]
+		self.NewTCSStepList = [13, 25.5, 38, 50.5, 63, 75.5, 88]
+		self.QSIStepList = [11,	26,	41,	55,	70,	85,	99]
+		self.SoundtraxxDSDStepList = [14,	28,	42,	56,	70,	84,	99]
+		self.TsunamiStepList = [14.5,	28.5,	42.5,	57,	71,	85,	99]
+		self.ESUStepList = [12,	27,	41,	56,	70,	85,	99]
 		return
+
 ####################################################################################
 #
 # self.myCVListener() Provides an acknowledgement after a CV write operation
@@ -316,53 +258,17 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################
 #
 # self.LoopActive() Returns true if there is a locomotive detected on the loop
+# JMD revised this to loop through all the sensors and if any of them is active,
+# then there is a locomotive on the track.
 #
 ####################################################################################	
-	def LoopActive(self, loop) :
+	def LoopActive(self) :
 		retval = False
-		if (loop == "HO") :	
-			blockSensor = sensors.provideSensor("BlockHO")
-			if (blockSensor.getKnownState() == CLOSED) :
-				retval = True
-		elif (loop == "N") :
-			blockSensor = sensors.provideSensor("BlockN")
+		for blockSensor in self.lowSpeedArrayN:
 			if (blockSensor.getKnownState() == CLOSED) :
 				retval = True
 		return retval			
-####################################################################################
-#
-# self.DCCPower() configures the testbed power controls for HO and N loops
-#
-####################################################################################	
-	def DCCPower(self, Loop, Value) :
-		if (Loop == "HO"): 
-			if (Value == "ON"):
-				print ("Testbed HO Track Loop Powered On.")
-				turnouts.provideTurnout("PowerHO").setState(CLOSED)
-				pass
-			elif (Value == "OFF") :
-				print ("Testbed HO Track Loop Powered Off.")
-				turnouts.provideTurnout("PowerHO").setState(THROWN)
-				pass
-			else :
-				print ("Please select either 'ON' or 'OFF'")
-				pass
-		elif (Loop == "N") :
-			if (Value == "ON"):
-				print ("Testbed N Track Loop Powered On.")
-				turnouts.provideTurnout("PowerN").setState(CLOSED)
-				pass
-			elif (Value == "OFF") :
-				print ("Testbed N Track Loop Powered Off.")
-				turnouts.provideTurnout("PowerN").setState(THROWN)
-				pass
-			else :
-				print ("Please select either 'ON' or 'OFF'")
-				pass
-		else :
-			print ("Please select either 'HO' or 'N' track loops")
-			pass
-		return
+
 ####################################################################################
 #
 # self.DCCSourceSelect() configures the testbed DCC input to main or program
@@ -421,16 +327,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 #
 ####################################################################################	
 	def TrackNormal(self):
-		self.DCCPower("HO", "OFF")
-		self.DCCPower("N", "OFF")
-		self.waitMsec(500)
-		self.SWLed("WHT", "OFF")
-		self.SWLed("BLU", "OFF")
-		self.waitMsec(500)
 		self.DCCSourceSelect("MAIN")
-		self.waitMsec(500)
-		self.DCCPower("HO", "ON")
-		self.DCCPower("N", "ON")
 		self.waitMsec(500)
 		return
 ####################################################################################
@@ -439,17 +336,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 #
 ####################################################################################	
 	def TrackProgram(self):
-		self.DCCPower("HO", "OFF")
-		self.DCCPower("N", "OFF")
-		self.waitMsec(500)
-		self.SWLed("WHT", "OFF")
-		self.SWLed("BLU", "OFF")
-		self.waitMsec(500)
 		self.DCCSourceSelect("PROG")
-		self.waitMsec(500)
-		self.DCCPower("HO", "ON")
-		self.DCCPower("N", "ON")
-		self.SWLed("WHT", "ON")
 		self.waitMsec(500)
 		return
 ####################################################################################
@@ -543,7 +430,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 #
 # The targetspeed parameter is used to select the appropriate sensor array
 ####################################################################################
-	def measureSpeed(self, targetspeed, block, scale) :
+	def measureSpeed(self, targetspeed) :
 		"""converts time to speed, ft/sec - scale speed"""
 		starttime = stoptime = 0	# Needed when using every block
 		speed = 0.0
@@ -555,33 +442,20 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.memory24.value = str(targetspeed)
 
 		if (int(targetspeed) >= self.HighSpeedThreshold) :
-			if (scale == "N"):
-				num_blocks = self.HighSpeedNBlocks
-				sensor_array = self.HighSpeedArrayN
-			else:
-				num_blocks = self.HighSpeedHOBlocks
-				sensor_array = self.HighSpeedArrayHO
+			num_blocks = self.HighSpeedNBlocks
+			sensor_array = self.HighSpeedArrayN
 			print ("Measuring speed using the high speed array,", num_blocks, "block(s)...")
 		elif (int(targetspeed) >= self.MediumSpeedThreshold) :
-			if (scale == "N"):
-				num_blocks = self.MediumSpeedNBlocks
-				sensor_array = self.MediumSpeedArrayN
-			else:
-				num_blocks = self.MediumSpeedHOBlocks
-				sensor_array = self.MediumSpeedArrayHO
+			num_blocks = self.MediumSpeedNBlocks
+			sensor_array = self.MediumSpeedArrayN
 			print ("Measuring speed using the medium speed array,", num_blocks, "block(s)...")
 		else:
-			if (scale == "N"):
-				num_blocks = self.LowSpeedNBlocks
-				sensor_array = self.LowSpeedArrayN
-			else:
-				num_blocks = self.LowSpeedHOBlocks
-				sensor_array = self.LowSpeedArrayHO
+			num_blocks = self.LowSpeedNBlocks
+			sensor_array = self.LowSpeedArrayN
 			print ("Measuring speed using the low speed array,", num_blocks, "block(s)...")
 
-            # Calculate the length of the selected block
-			
-		blocklength = block * num_blocks
+		# Calculate the length of the selected block
+		blocklength = self.block * num_blocks
 
         # Measure the speed a number of times and put those speeds into a list
 
@@ -621,24 +495,13 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.memory25.value = "Preparing Locomotive for speed measurments"
 
 		self.TrackNormal()
-
-		if (self.LoopActive("HO") and self.LoopActive("N")) :
-			print ("Only ONE track loop can be active at a time!")
-			return
-		if (self.LoopActive("HO")) :
-			self.status.text = "HO Scale Locomotive Detected"
-			print ("Locomotive found on HO track loop")
-			self.block = self.blockHO
-			self.scale = "HO"
-			pass	
-		elif (self.LoopActive("N")) :
-			self.status.text = "N Scale Locomotive Detected"
-			print ("Locomotive found on N track loop")
-			self.block = self.blockN
-			self.scale = "N"
+	
+		if (self.LoopActive()) :
+			self.status.text = "Locomotive Detected"
+			print ("Locomotive found on track loop")
 			pass
 		else :
-			print ("No locomotive detected, cannot proceed")
+			print ("No locomotive detected on the track, cannot proceed")
 			return
 			
 		self.TrackProgram()	
@@ -686,14 +549,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		print ("The Current Private ID is ", self.val105, ", ", self.val106)
 
 		self.TrackNormal()	
-
-		if (self.scale == "N") :
-			self.DCCPower("N",  "ON")
-			self.DCCPower("HO", "OFF")
-		else:
-			self.DCCPower("HO", "ON")
-			self.DCCPower("N",  "OFF")
-		self.waitMsec(500)
 
         # Getting throttle
 		
@@ -808,7 +663,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 			self.status.text = "Finding Maximum Reverse Speed"
 			self.throttle.setSpeedSetting(1.0)
 			self.waitMsec(500)
-			revmaxspeed = self.measureSpeed(100, self.block, self.scale)
+			revmaxspeed = self.measureSpeed(self.fullSpeed)
 			print ("Maximum reverse speed found = ",round(revmaxspeed))
 			print
 			print ("Returning locomotive to block", self.homesensor_num, "...")
@@ -831,7 +686,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.memory20.value = "Forward"
 		self.throttle.setSpeedSetting(1.0)
 		self.waitMsec(1000)
-		fwdmaxspeed = self.measureSpeed(100, self.block, self.scale)
+		fwdmaxspeed = self.measureSpeed(self.fullSpeed)
 		print ("Maximum forward speed found = ",round(fwdmaxspeed))
 		print
 		print ("Returning locomotive to block", self.homesensor_num, "...")
@@ -884,7 +739,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 			self.throttle.setSpeedSetting(.85)
 			self.waitMsec(2000)
-			speed = self.measureSpeed(100, self.block, self.scale)
+			speed = self.measureSpeed(self.fullSpeed)
 			self.throttle.setSpeedSetting(0.0)
 			if speed > (.9 * fwdmaxspeed) :
 				steplist = self.NewTCSStepList
@@ -983,7 +838,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 					self.waitMsec(100)
 					print
 					print ("Throttle Setting ",throttlesetting)
-					speed = self.measureSpeed(targetspeed, self.block, self.scale)
+					speed = self.measureSpeed(targetspeed)
  
 					# compare it to desired speed and decide whether or not to test a different throttle setting
 					difference = targetspeed - speed
