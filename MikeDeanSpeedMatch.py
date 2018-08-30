@@ -188,6 +188,8 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################
 #
 # self.myCVListener() Provides an acknowledgement after a CV write operation
+# JMD: A listener is required for writeCV method, and this is the listener.
+# JMD: The writeCV call is made from testbedWriteCV.
 #
 ####################################################################################	
 	def myCVListener(self, value, status) :
@@ -274,6 +276,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################
 #
 # self.TrackNormal() configures the testbed to turn the main DCC power to both loops
+# JMD: For my project with a single track, this method can be eliminated.
 #
 ####################################################################################	
 	def TrackNormal(self):
@@ -283,6 +286,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 ####################################################################################
 #
 # self.TrackProgram() configures the testbed to select the DCC program on both loops
+# JMD: For my project with a single track, this method can be eliminated.
 #
 ####################################################################################	
 	def TrackProgram(self):
