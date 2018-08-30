@@ -85,34 +85,8 @@
 #	11/05/17	Ported to Erich Whitney's Speed Calibration Testbed (NCE and C/MRI) setup with KATO track both N and HO
 #   07/07/18	Changed to cpOD Block Detectors and rewrote speed measurement code
 #   08/22/18    JMD changes to version 3.0 which will be N scale only.
+#	08/30/18	JMD eliminated all memory value variables as never used.
 # 
-# Memory Location Mapping
-#====================================================== 
-# memory1 : speed measurement 1 - no longer used
-# memory2 : speed measurement 2 - no longer used
-# memory3 : speed measurement 3 - no longer used
-# memory4 : speed measurement 4 - no longer used
-# memory5 : speed measurement 5 - no longer used
-# memory6 : speed measurement 6 - no longer used
-# memory7 : speed measurement 7 - no longer used
-# memory8 : speed measurement 8 - no longer used
-# memory9 : speed measurement 9 - no longer used
-# memory10: speed measurement 10 - no longer used
-# memory11: speed measurement 11 - no longer used
-# memory12: speed measurement 12 - no longer used
-# memory13: speed measurement 13 - no longer used
-# memory14: speed measurement 14 - no longer used
-# memory15: speed measurement 15 - no longer used
-# memory16: speed measurement 16 - no longer used
-# memory17: 
-# memory18: 
-# memory19: 
-# memory20: direction
-# memory21: reverse max speed
-# memory22: forward max speed
-# memory23: decoder brand
-# memory24: target speed
-# memory25: current step in the algorithm (text)
 
 import java
 import javax.swing
@@ -157,30 +131,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		self.sensor11 = sensors.provideSensor("Block:11")
 		self.sensor12 = sensors.provideSensor("Block:12")
 		self.homesensor = sensors.provideSensor("Block:12")
-		
-		
-		self.memory1 = memories.provideMemory("1")
-		self.memory2 = memories.provideMemory("2")
-		self.memory3 = memories.provideMemory("3")
-		self.memory4 = memories.provideMemory("4")
-		self.memory5 = memories.provideMemory("5")
-		self.memory6 = memories.provideMemory("6")
-		self.memory7 = memories.provideMemory("7")
-		self.memory8 = memories.provideMemory("8")
-		self.memory9 = memories.provideMemory("9")
-		self.memory10 = memories.provideMemory("10")
-		self.memory11 = memories.provideMemory("11")
-		self.memory12 = memories.provideMemory("12")
-		self.memory13 = memories.provideMemory("13")
-		self.memory14 = memories.provideMemory("14")
-		self.memory15 = memories.provideMemory("15")
-		self.memory16 = memories.provideMemory("16")
-		self.memory20 = memories.provideMemory("20")
-		self.memory21 = memories.provideMemory("21")
-		self.memory22 = memories.provideMemory("22")
-		self.memory23 = memories.provideMemory("23")
-		self.memory24 = memories.provideMemory("24")
-		self.memory25 = memories.provideMemory("25")
 
 		# Different block sizes for different speeds or it would take
 		# forever to do the low speed if loco had to circle whole track
@@ -492,7 +442,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		topspeed = float(self.MaxSpeed.text)/100
 		print ("Top Target Speed is ", self.MaxSpeed.text, "MPH")
 		self.status.text = "Locomotive Setup"
-		self.memory25.value = "Preparing Locomotive for speed measurments"
 
 		self.TrackNormal()
 	
@@ -573,22 +522,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 	
 		starttesttime = java.lang.System.currentTimeMillis()
 		badlocomotive = False # will be true if locomotive will not go slow enough
-		self.memory1.value = " "
-		self.memory2.value = " "
-		self.memory3.value = " "
-		self.memory4.value = " "
-		self.memory5.value = " "
-		self.memory6.value = " "
-		self.memory7.value = " "
-		self.memory8.value = " "
-		self.memory9.value = " "
-		self.memory10.value = " "
-		self.memory11.value = " "
-		self.memory12.value = " "
-		self.memory13.value = " "
-		self.memory14.value = " "
-		self.memory15.value = " "
-		self.memory16.value = " "
 
 		if (self.val105 != 42) :
 			self.testbedWriteCV(105, 42) # Write Private ID #42 in Decoder CV 105
@@ -599,7 +532,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		print ("Set Private ID to ", self.val105, ", ", self.val106)
 
 		print ("Decoder Brand is", self.DecoderType)
-		self.memory23.value = self.DecoderType
+
  		
 		self.memory25.value = "Setting CVs to known state"
 		self.testbedWriteCV(62, 0) # Turn off verbal reporting on QSI decoders
@@ -621,12 +554,10 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		# Run Locomotive for 5 laps each direction to warm it up
 
-		self.memory25.value = "Warming up Locomotive"
 		self.status.text = "Warming up Locomotive"
 		print
 		print ("Warming up Locomotive")
 		self.throttle.setIsForward(True)
-		self.memory20.value = "Forward"
 
 		#01/09/09	TCS decoder would not move when setting throttle to 1.0
  
@@ -649,7 +580,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		if self.Locomotive.getSelectedItem() <> "Steam" :
 			self.throttle.setIsForward(False)
-			self.memory20.value = "Reverse"
 			self.throttle.setSpeedSetting(1.0)
 
 			print ("Warming up in the reverse direction for", self.warmupLaps, "laps...")
@@ -659,7 +589,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		# Find maximum speed reverse
 
 			print ("Finding the maximum reverse speed...")
-			self.memory25.value = "Finding Maximum Reverse Speed"
 			self.status.text = "Finding Maximum Reverse Speed"
 			self.throttle.setSpeedSetting(1.0)
 			self.waitMsec(500)
@@ -674,16 +603,12 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		else :
 			revmaxspeed = 0
 
-		self.memory21.value = str(int(revmaxspeed))
-
 		# Find maximum speed forward
 		
-		self.memory25.value = "Finding Maximum Forward Speed"
 		self.status.text = "Finding Maximum Forward Speed"
 		print ("Finding the maximum forward speed over", self.NumSpeedMeasurements, "laps...")
 		self.throttle.setIsForward(True)
 		self.waitMsec(500)
-		self.memory20.value = "Forward"
 		self.throttle.setSpeedSetting(1.0)
 		self.waitMsec(1000)
 		fwdmaxspeed = self.measureSpeed(self.fullSpeed)
@@ -691,38 +616,30 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 		print
 		print ("Returning locomotive to block", self.homesensor_num, "...")
 		self.waitNextActiveSensor([self.homesensor])
-		
 		self.throttle.setSpeedSetting(0.0)
 		self.status.text = "Max Forward Speed " + str(int(fwdmaxspeed))
-		self.memory22.value = str(int(fwdmaxspeed))
 		self.waitMsec(1000)
 
 		if (fwdmaxspeed > revmaxspeed) :
 			print ("Locomotive",self.address,"is faster in the forward direction")
 			self.throttle.setIsForward(True)
 			self.waitMsec(500)
-			self.memory20.value = "Forward"
 		elif (revmaxspeed > fwdmaxspeed) :
 			print ("Locomotive",self.address,"is faster in the reverse direction")
 			self.throttle.setIsForward(False)
 			self.waitMsec(500)
-			self.memory20.value = "Reverse"
 		else :
 			print ("Locomotive",self.address,"runs equally well in both directions")
 			self.throttle.setIsForward(True)
 			self.waitMsec(500)
-			self.memory20.value = "Forward"
-
 
 		print
-		self.memory23.value = self.DecoderType
 		print ("Decoder Brand is ",self.DecoderType)
 
 		if self.DecoderType == "Digitrax" :
 			steplist = self.DigitraxStepList 
 		elif self.DecoderType == "TCS" :
 			#09/15/09
-			self.memory25.value = "Determining Type of TCS Decoder"
 			self.status.text = "Determining Type of TCS Decoder"
 			print ("Determining Type of TCS Decoder")
 
@@ -775,7 +692,6 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 
 		if self.DecoderType <> "Unknown" :
 
-			self.memory25.value = "Measuring Speeds"
 			self.status.text = "Measuring Speeds"
 
 			#Turn off speed table for measurements
@@ -1018,8 +934,7 @@ class DCCDecoderCalibration(jmri.jmrit.automat.AbstractAutomaton) :
 				print ("All Values")
 				print (stepvaluelist)
 
-				self.memory25.value = "Writing Speed Table to Locomotive"
-
+				print("Writing Speed table to locomotive")
 				# Write Speed Table to locomotive
 				for z in range (67, 95) :
 					self.testbedWriteCV(z, int(stepvaluelist[z - 66]))
